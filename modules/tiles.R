@@ -19,34 +19,38 @@ tiles_page <- page(
 tiles_callback <- function(input, output, session, tiles_path) {
 
   observeEvent(input$set, {
-    tiles_path(input$set)
+    tiles_path(file.path("tiles", input$set))
   })
   
   observeEvent(input$confirm_tags, {
-    tiles_path(input$tags)
-    prepare_tiles(tiles_path())
+    tiles_path(file.path("tiles", input$tags))
+    prepare_tiles(input$tags)
   })
   
 }
 
-prepare_tiles <- function(tiles_path) {
-  target_path <- "tile"
-  unlink(target_path, recursive = TRUE)
-  dir.create(target_path)
+prepare_tiles <- function(tiles_tags) {
   size <- c(30, 20)
-  
+  tiles_path <- file.path("tile", tiles_tags)
   message("downloading data")
-  for (tile_path in tiles_path) {
-    api_url <- httr::GET(glue::glue("https://api.creativecommons.engineering/v1/images/?q={tile_path}&type=jpg&size=small&page_size=500&page=1"))
+  for (tile_tag in tiles_tags) {
+    tile_path <- file.path("tile", tile_tag)
+    api_url <- httr::GET(glue::glue("https://api.creativecommons.engineering/v1/images/?q={tile_tag}&type=jpg&size=small&page_size=500&page=1"))
     images_meta <- content(api_url)$results
     urls <- images_meta %>% purrr::map_chr("url") %>% unique()
+    
     unlink(tile_path, recursive = TRUE)
     dir.create(tile_path)
     download.file(urls, destfile = file.path(tile_path, basename(urls)))
   }
   
   message("resizing images")
-  for (tile_path in tiles_path) {
+  for (tile_tag in tiles_tags) {
+    tile_path <- file.path("tile", tile_tag)
+    target_path <- file.path("tiles", tile_tag)
+    unlink(target_path, recursive = TRUE)
+    dir.create(target_path)
+    
     for (img in list.files(tile_path, pattern = "jpg")) {
       print(img)
       im <- load.image(file = file.path(tile_path, img))
@@ -57,5 +61,6 @@ prepare_tiles <- function(tiles_path) {
       imager::save.image(thmb, file = file.path(target_path, img))
     }
   }
+  unlink(tiles_path, recursive = TRUE)
   message("done")
 }

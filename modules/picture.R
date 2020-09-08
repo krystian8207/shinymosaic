@@ -5,7 +5,7 @@ picture_page <- page(
     div(
       class = "ui two column very relaxed grid", 
       div(class = "column", fileInput("image_upload", "Upload your image")),
-      div(class = "column", tags$label("Take a photo"), actionButton("photomake", "Make"), div(id = "pht"))#, shinyviewr_UI("photo"))
+      div(class = "column", tags$label("Take a photo"), actionButton("photomake", "Make"), shinyviewr_UI("photo"))
     ),
     div(class = "ui vertical divider", "or"),
     imageOutput("photo_view")
@@ -15,37 +15,39 @@ picture_page <- page(
 )
 
 picture_callback <- function(input, output, session) {
+  trigger <- reactiveVal(NULL)
+  #file_path <- reactiveVal(NULL)
   
-  observeEvent(input$photomake, {
-    insertUI(
-      selector = "#pht",
-      where = "afterBegin",
-      tagList(
-        startWebcam(width = 320, height = 240, quality = 100),
-        snapshotButton(),
-        takeSnapshot()   
-      )
-    )
+  camera_snapshot <- callModule(shinyviewr, 'photo', output_width = 400)
+  observeEvent(camera_snapshot(), {
+    jpeg(filename="www/cam.jpg")
+    par(mar = rep(0, 4))
+    plot(camera_snapshot(), main = 'My Photo!')
+    dev.off()
+    im <- load.image("www/cam.jpg")
+    out_width <- 150
+    out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
+    im_input <- resize(im, out_width, out_height)
+    fin_file <- "www/cam.jpg"
+    imager::save.image(im_input, file = fin_file)
+    trigger(runif(1))
   })
   
-  # camera_snapshot <- callModule(shinyviewr, 'photo', output_width = 400)
-  # trigger <- reactiveVal(NULL)
-  # observeEvent(camera_snapshot(), {
-  #   png(filename="cam.png")
-  #   plot(camera_snapshot(), main = 'My Photo!')
-  #   dev.off()
-  #   trigger(runif(1))
-  # })
-  # 
-  # observeEvent(input$image_upload, {
-  #   file <- input$image_upload
-  #   file.copy(file, "cam.png")
-  #   trigger(runif(1))
-  # })
-  # 
-  # output$photo_view <- renderImage({
-  #   req(trigger())
-  #   list(src = "cam.png")
-  # }, deleteFile = FALSE)
+  observeEvent(input$image_upload, {
+    print("update")
+    file <- input$image_upload$datapath
+    im <- load.image(file)
+    out_width <- 150
+    out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
+    im_input <- resize(im, out_width, out_height)
+    fin_file <- "www/cam.jpg"
+    imager::save.image(im_input, file = fin_file)
+    trigger(runif(1))
+  })
+  
+  output$photo_view <- renderImage({
+    req(trigger())
+    list(src = "www/cam.jpg")
+  }, deleteFile = FALSE)
   
 }

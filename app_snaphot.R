@@ -7,7 +7,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  camera_snapshot <- callModule( shinyviewr, 'photo', output_width = 400)
+  camera_snapshot <- callModule(shinyviewr, 'photo', output_width = 400)
   trigger <- reactiveVal(NULL)
   observeEvent(camera_snapshot(), {
     png(filename="cam.png")
