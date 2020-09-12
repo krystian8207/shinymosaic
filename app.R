@@ -9,18 +9,10 @@ library(shinywebcam)
 library(shinysense)
 
 source("modules/utils.R")
+source("modules/home.R")
 source("modules/picture.R")
 source("modules/tiles.R")
 source("modules/mosaic.R")
-
-# Both sample pages.
-hello_page <- page(
-  "home",
-  "Home page",
-  "Welcome to mosaic image creator!",
-  NULL, 
-  list(id = "tiles", title =  "Start", icon = "angle double right")
-)
 
 router <- make_router(
   route("home", hello_page),
@@ -33,7 +25,8 @@ ui <- semanticPage(
   tags$head(
     tags$link(rel = "stylesheet", href = "style.css")
   ),
-  router$ui
+  router$ui,
+  margin = 0
 )
 
 server <- function(input, output, session) {

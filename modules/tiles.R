@@ -1,15 +1,56 @@
+divider <- function(..., class = "") {
+  div(class = glue::glue("ui {class} divider"), ...)
+}
+column <- function(..., class = "") {
+  div(class = glue::glue("{class} column"), ...)
+}
+row <- function(..., class = "") {
+  div(class = glue::glue("{class} row"), ...)
+}
+
 tiles_page <- page(
   "tiles",
-  "Choose collection", 
-  segment(
-    div(
-      class = "ui two column very relaxed grid", 
-      div(class = "column", multiple_checkbox("set", "Select from predefined sets of tiles", 
-                                           choices = c("dogs", "cats", "cars"))),
-      div(class = "column", textInput("tags", "Search for tags"), actionButton("confirm_tags", "Confirm"))
+  "Choose image collection",
+  tagList(
+    segment(
+      class = "placeholder",
+      div(
+        class = "ui two column stackable center aligned grid",
+        divider("OR", class = "vertical"),
+        row(
+          class = "middle aligned", 
+          column(
+            div(class = "ui icon header", icon("search"), span(class = "ui large text", "Select ready set")),
+            div(
+              class = "ui massive form",
+              multiple_radio(
+                "set", NULL, 
+                choices = c("dogs", "cats", "cars"), position = "inline"
+              )
+            )
+          ),
+          column(
+            div(class = "ui icon header", icon("world"), span(class = "ui large text", "Create your own")),
+            div(
+              class = "field",
+              shiny.semantic::uiinput(
+                class = "big right labeled left icon", icon("tags"), text_input(input_id = "tags", placeholder = "Enter tag"), 
+                button("confirm_tags", "Confirm tag", class = "tag label")
+              )
+            )
+          )
+        )
+      )
+      #   div(
+      #     class = "ui two column very relaxed grid", 
+      #     div(class = "column", multiple_radio("set", "Select from predefined sets of tiles", 
+      #                                          choices = c("dogs", "cats", "cars"))),
+      #     div(class = "column", textInput("tags", "Search for tags"), actionButton("confirm_tags", "Confirm"))
+      #   ),
+      #   div(class = "ui vertical divider", "or")
     ),
-    div(class = "ui vertical divider", "or")
-  ), 
+    div(class = "ui large floating message", "Selected collection: cats", style = "text-align: center;")
+  ),
   list(id = "home", title = "Home", icon = "angle double left"),
   list(id = "picture", title =  "Choose picture", icon = "angle double right")
 )
@@ -17,7 +58,7 @@ tiles_page <- page(
 
 
 tiles_callback <- function(input, output, session, tiles_path) {
-
+  
   observeEvent(input$set, {
     tiles_path(file.path("tiles", input$set))
   })
@@ -30,7 +71,7 @@ tiles_callback <- function(input, output, session, tiles_path) {
 }
 
 prepare_tiles <- function(tiles_tags) {
-  size <- c(30, 20)
+  size <- c(20, 20)
   tiles_path <- file.path("tile", tiles_tags)
   message("downloading data")
   for (tile_tag in tiles_tags) {

@@ -25,7 +25,7 @@ picture_callback <- function(input, output, session) {
     plot(camera_snapshot(), main = 'My Photo!')
     dev.off()
     im <- load.image("www/cam.jpg")
-    out_width <- 150
+    out_width <- 200
     out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
     im_input <- resize(im, out_width, out_height)
     fin_file <- "www/cam.jpg"
@@ -37,7 +37,7 @@ picture_callback <- function(input, output, session) {
     print("update")
     file <- input$image_upload$datapath
     im <- load.image(file)
-    out_width <- 150
+    out_width <- 200
     out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
     im_input <- resize(im, out_width, out_height)
     fin_file <- "www/cam.jpg"

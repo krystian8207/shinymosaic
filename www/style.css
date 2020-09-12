@@ -1,3 +1,24 @@
 #mosaied img {
   width: 600px;
 }
+
+div[data-path="home"] {
+  background-image: url("start.jpeg");
+  background-size: 100% 100%;
+}
+
+#router-page-wrapper {
+  height: 100%;
+}
+
+.router {
+  height: inherit;
+}
+
+#set div.field:first-of-type {
+  margin-left: auto;
+}
+
+#set div.field:last-of-type {
+  margin-right: auto;
+}
