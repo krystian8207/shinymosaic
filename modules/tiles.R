@@ -25,6 +25,7 @@ tiles_page <- page(
             div(
               class = "field",
               shiny.semantic::uiinput(
+                `data-tooltip` = "Images will be downloaded using https://api.creativecommons.engineering/v1 API",
                 class = "big right labeled left icon", icon("tags"), text_input(input_id = "tags", placeholder = "Enter tag"), 
                 button("confirm_tags", "Confirm tag", class = "tag label")
               )
@@ -62,6 +63,7 @@ tiles_callback <- function(input, output, session, tiles_path) {
   
   observeEvent(input$set, {
     req(input$set)
+    tiles_path(file.path("tiles", input$set))
     output$progress_message <- renderUI({
         div(
           class = "ui massive floating message", 

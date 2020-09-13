@@ -119,3 +119,15 @@ function clear_checkbox(message) {
   $('#' + message.id + ' .checkbox').checkbox('uncheck')
 }
 Shiny.addCustomMessageHandler("clear-checkbox", clear_checkbox);
+
+function toggle_visibility(message) {
+  if (message.action == "show") {
+    $('#' + message.id).show()
+  }
+  if (message.action == "hide") {
+    $('#' + message.id).hide()
+  }
+
+}
+
+Shiny.addCustomMessageHandler("toggle-view", toggle_visibility);

@@ -1,4 +1,4 @@
-file_input <- fileInput("image_upload", "Upload your image")
+file_input <- fileInput("image_upload", "Upload your image", accept = c(".jpg", ".jpeg", ".png"))
 file_input$attribs$style <- "display:none;"
 
 file_input_button <- tags$button(
@@ -58,7 +58,7 @@ picture_page <- page(
     )
   ),
   list(id = "home", title = "Home", icon = "angle double left"),
-  list(id = "mosaic", title =  "Mosaic Me!", icon = "angle double right")
+  list(id = "mosaic", title =  "Mosaic generation", icon = "angle double right")
 )
 
 picture_callback <- function(input, output, session) {
@@ -80,7 +80,7 @@ picture_callback <- function(input, output, session) {
     out_width <- 200
     out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
     im_input <- resize(im, out_width, out_height)
-    imager::save.image(im_input, file = file_path)
+    imager::save.image(im_input, file = "www/cam.jpg")
     session$sendCustomMessage("toggle-next", list(id = "picture-mosaic", action = "pass"))
   })
   

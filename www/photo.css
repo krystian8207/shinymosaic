@@ -7,6 +7,10 @@
     width: 320px !important;
 }
 
+.uploadoutput {
+    width: 200px !important;
+}
+
 .camerainput > .image, .photooutput > .image {
     height: auto !important;
 }

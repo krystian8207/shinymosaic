@@ -14,8 +14,8 @@ standard_page_grid <- grid_template(default = list(
     c("content", "content", "content"),
     c("prev_page",   "blankc",  "next_page")
   ),
-  rows_height = c("20%", "60%", "20%"),
-  cols_width = c("25%", "auto", "25%")
+  rows_height = c("10%", "70%", "20%"),
+  cols_width = c("30%", "auto", "30%")
 ))
 
 click_button <- function(input_id, label, icon = NULL, class = NULL, ...) {
@@ -30,12 +30,12 @@ page <- function(id, title, content, prev_page, next_page) {
   }
   if (!is.null(next_page)) {
     next_page = click_button(glue::glue("{id}-{next_page$id}"), next_page$title, class = "orange right labeled icon massive disabled",
-                             icon = icon(next_page$icon), href = route_link(next_page$id), style = "font-size: 2.5rem;")
+                             icon = icon(next_page$icon), href = route_link(next_page$id), style = "font-size: 2.5rem;", onclick = next_page$js)
   }
     
   div(
     grid(standard_page_grid,
-         container_style = "padding: 10%;",
+         container_style = "padding: 5%;",
          blankc = div(""),
          title = div(class = "ui center aligned basic segment", div(class = "ui header", style = "font-size: 4em;", title)),
          content = div(content),

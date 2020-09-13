@@ -2,6 +2,11 @@
   width: 600px;
 }
 
+#mosaied {
+  width: 100% !important;
+  height: auto !important;
+}
+
 div[data-path="home"] {
   background-image: url("start.jpeg");
   background-size: 100% 100%;
