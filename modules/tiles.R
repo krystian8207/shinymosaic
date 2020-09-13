@@ -10,7 +10,7 @@ tiles_page <- page(
         row(
           class = "middle aligned", 
           column(
-            div(class = "ui icon header", icon("search"), span(class = "ui large text", "Select ready set")),
+            div(class = "ui icon header", icon("mouse pointer"), span(class = "ui large text", "Select ready set")),
             div(
               class = "ui massive form",
               multiple_radio(
@@ -42,15 +42,15 @@ tiles_page <- page(
 
 
 
-tiles_callback <- function(input, output, session, tiles_path) {
+tiles_callback <- function(input, output, session, tiles_path, user_path) {
 
   observeEvent(input$confirm_tags, {
     req(input$confirm_tags)
     session$sendCustomMessage("toggle-next", list(id = "tiles-picture", action = "stop"))
     output$progress_message <- renderUI({
       with_progress({
-        tiles_path(file.path("tiles", input$tags))
-        prepare_tiles(input$tags, session)
+        tiles_path(file.path(user_path, "tiles", input$tags))
+        prepare_tiles(input$tags, user_path, session)
         div(
           class = "ui massive floating message", 
           sprintf("Selected collection: %s", input$tags), 
@@ -75,12 +75,13 @@ tiles_callback <- function(input, output, session, tiles_path) {
   }, ignoreNULL = TRUE)
 }
 
-prepare_tiles <- function(tiles_tags, session) {
+prepare_tiles <- function(tiles_tags, user_path, session) {
   size <- c(20, 20)
-  tiles_path <- file.path("tile", tiles_tags)
+  dir.create(file.path(user_path, "tile"))
+  tiles_path <- file.path(user_path, "tile", tiles_tags)
   set_progress(value = 0.1, message = "Downloading data..", session = session)
   for (tile_tag in tiles_tags) {
-    tile_path <- file.path("tile", tile_tag)
+    tile_path <- file.path(user_path, "tile", tile_tag)
     api_url <- httr::GET(glue::glue("https://api.creativecommons.engineering/v1/images/?q={tile_tag}&type=jpg&size=small&page_size=500&page=1"))
     images_meta <- content(api_url)$results
     urls <- images_meta %>% purrr::map_chr("url") %>% unique()
@@ -93,13 +94,14 @@ prepare_tiles <- function(tiles_tags, session) {
 
   message("resizing images")
   for (tile_tag in tiles_tags) {
-    tile_path <- file.path("tile", tile_tag)
-    target_path <- file.path("tiles", tile_tag)
+    tile_path <- file.path(user_path, "tile", tile_tag)
+    target_path <- file.path(user_path, "tiles", tile_tag)
+    unlink(file.path(user_path, "tiles"), recursive = TRUE)
+    dir.create(file.path(user_path, "tiles"))
     unlink(target_path, recursive = TRUE)
     dir.create(target_path)
     
     for (img in list.files(tile_path, pattern = "jpg")) {
-      print(img)
       im <- load.image(file = file.path(tile_path, img))
       if (dim(im)[4] != 3) {
         next

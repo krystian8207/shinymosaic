@@ -61,8 +61,10 @@ picture_page <- page(
   list(id = "mosaic", title =  "Mosaic generation", icon = "angle double right")
 )
 
-picture_callback <- function(input, output, session) {
+picture_callback <- function(input, output, session, user_path) {
   trigger <- reactiveVal(NULL)
+  file_path_jpg <- file.path(user_path, "cam.jpg")
+  file_path_png <- file.path(user_path, "cam.png")
 
   observeEvent(input$takeaphoto, {
     session$sendCustomMessage("take-photo", list(value = "run"))
@@ -72,35 +74,32 @@ picture_callback <- function(input, output, session) {
     sent_image <- input$data_url %>% 
       gsub("data:image/png;base64,", "", ., fixed = TRUE) %>% 
       gsub(" ", "+", ., fixed = TRUE)
-    file_path <- "www/cam.png"
-    outconn <- file(file_path,"wb")
+    outconn <- file(file_path_png,"wb")
     base64enc::base64decode(what=sent_image, output=outconn)
     close(outconn)
-    im <- load.image(file_path)
+    im <- load.image(file_path_png)
     out_width <- 200
     out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
     im_input <- resize(im, out_width, out_height)
-    imager::save.image(im_input, file = "www/cam.jpg")
+    imager::save.image(im_input, file = file_path_jpg)
     session$sendCustomMessage("toggle-next", list(id = "picture-mosaic", action = "pass"))
   })
   
   observeEvent(input$image_upload, {
-    print("update")
     session$sendCustomMessage("show-upload", list(value = "run"))
     file <- input$image_upload$datapath
     im <- load.image(file)
     out_width <- 200
     out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
     im_input <- resize(im, out_width, out_height)
-    fin_file <- "www/cam.jpg"
-    imager::save.image(im_input, file = fin_file)
+    imager::save.image(im_input, file = file_path_jpg)
     session$sendCustomMessage("toggle-next", list(id = "picture-mosaic", action = "pass"))
     trigger(input$image_upload)
   })
   
   output$photo_view <- renderImage({
     req(trigger())
-    list(src = "www/cam.jpg")
+    list(src = file_path_jpg)
   }, deleteFile = FALSE)
   outputOptions(output, "photo_view", suspendWhenHidden = FALSE)
   

@@ -5,8 +5,6 @@ library(httr)
 library(magrittr)
 library(imager)
 library(RsimMosaic)
-library(shinywebcam)
-library(shinysense)
 
 source("modules/utils.R")
 source("modules/home.R")
@@ -32,7 +30,8 @@ ui <- semanticPage(
 
 server <- function(input, output, session) {
   tiles_path <- reactiveVal(NULL)
-  router$server(input, output, session, tiles_path = tiles_path)
+  user_path <- tempdir()
+  router$server(input, output, session, tiles_path = tiles_path, user_path = user_path)
 }
 
 shinyApp(ui, server)

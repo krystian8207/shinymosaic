@@ -11,15 +11,16 @@ mosaic_page <- page(
   list(id = "home", title = "Try again!", icon = "undo", js = "setTimeout(location.reload.bind(location), 1);")
 )
 
-mosaic_callback <- function(input, output, session, tiles_path) {
+mosaic_callback <- function(input, output, session, tiles_path, user_path) {
   trigger_save <- reactiveVal(NULL)
   trigger_download <- reactiveVal(NULL)
+  file_path_jpg <- file.path(user_path, "cam.jpg")
+  orig_file_out <- file.path(user_path, "final.jpg")
   
   observeEvent(input$confirm_settings, {
     session$sendCustomMessage("toggle-next", list(id = "confirm_settings", action = "stop"))
-    orig_file_out <- "www/final.jpg"
     tiles_path <- tiles_path()
-    composeMosaicFromImageRandom("www/cam.jpg", orig_file_out, tiles_path, removeTiles=FALSE)
+    composeMosaicFromImageRandom(file_path_jpg, orig_file_out, tiles_path, removeTiles=FALSE)
     trigger_save(runif(1))
   })
   
@@ -27,7 +28,7 @@ mosaic_callback <- function(input, output, session, tiles_path) {
     req(trigger_save())
     session$sendCustomMessage("toggle-view", list(id = "confirm_settings", action = "hide"))
     trigger_download(runif(1))
-    list(src = "www/final.jpg")
+    list(src = orig_file_out)
   }, deleteFile = FALSE)
   
   output$download_image <- renderUI({
@@ -41,7 +42,7 @@ mosaic_callback <- function(input, output, session, tiles_path) {
     filename = "mosaic.jpg",
     contentType = "image/jpeg",
     content = function(file) {
-      file.copy("www/final.jpg", file)
+      file.copy(orig_file_out, file)
     }
   )
   
