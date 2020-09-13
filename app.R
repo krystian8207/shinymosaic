@@ -24,8 +24,7 @@ router <- make_router(
 ui <- semanticPage(
   tags$head(
     tags$link(rel = "stylesheet", href = "style.css"),
-    tags$link(rel = "stylesheet", href = "photo.css"),
-    tags$script(src = "photo.js")
+    tags$script(src = "app.js")
   ),
   router$ui,
   margin = 0

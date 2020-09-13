@@ -20,6 +20,45 @@ div[data-path="home"] {
   height: inherit;
 }
 
+#video, #photo {
+    width: 320px !important;
+    height: 240px !important;
+}
+
+.camerainput, .photooutput {
+    width: 320px !important;
+}
+
+.uploadoutput {
+    width: 200px !important;
+}
+
+.camerainput > .image, .photooutput > .image {
+    height: auto !important;
+}
+
+#startbutton, #again {
+    width: 320px !important;
+    max-width: 320px !important;
+}
+
+#canvas {
+    display: none;
+}
+
+#contentarea div.camerainput, #contentarea div.photooutput, #contentarea div.uploadoutput {
+    display: none;
+}
+
+#image_message {
+    font-size: 1.5rem;
+}
+
+.toast-box i.close {
+    display: none;
+}
+
+
 #set div.field:first-of-type {
   margin-left: auto;
 }
