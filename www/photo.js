@@ -104,3 +104,18 @@ function show_uploaded(message) {
 
 Shiny.addCustomMessageHandler("take-photo", startup);
 Shiny.addCustomMessageHandler("show-upload", show_uploaded);
+
+function toggle_next_step(message) {
+  if (message.action == "pass") {
+    $('#' + message.id).removeClass("disabled")
+  }
+  if (message.action == "stop") {
+    $('#' + message.id).addClass("disabled")
+  }
+}
+Shiny.addCustomMessageHandler("toggle-next", toggle_next_step);
+
+function clear_checkbox(message) {
+  $('#' + message.id + ' .checkbox').checkbox('uncheck')
+}
+Shiny.addCustomMessageHandler("clear-checkbox", clear_checkbox);

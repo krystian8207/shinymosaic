@@ -58,34 +58,30 @@ picture_page <- page(
     )
   ),
   list(id = "home", title = "Home", icon = "angle double left"),
-  list(id = "picture", title =  "Choose picture", icon = "angle double right")
+  list(id = "mosaic", title =  "Mosaic Me!", icon = "angle double right")
 )
 
 picture_callback <- function(input, output, session) {
   trigger <- reactiveVal(NULL)
-  #file_path <- reactiveVal(NULL)
-  
-  # camera_snapshot <- callModule(shinyviewr, 'photo', output_width = 400)
-  # observeEvent(camera_snapshot(), {
-  #   jpeg(filename="www/cam.jpg")
-  #   par(mar = rep(0, 4))
-  #   plot(camera_snapshot(), main = 'My Photo!')
-  #   dev.off()
-  #   im <- load.image("www/cam.jpg")
-  #   out_width <- 200
-  #   out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
-  #   im_input <- resize(im, out_width, out_height)
-  #   fin_file <- "www/cam.jpg"
-  #   imager::save.image(im_input, file = fin_file)
-  #   trigger(runif(1))
-  # })
-  
+
   observeEvent(input$takeaphoto, {
     session$sendCustomMessage("take-photo", list(value = "run"))
   })
   
   observeEvent(input$data_url, {
-    print("data")
+    sent_image <- input$data_url %>% 
+      gsub("data:image/png;base64,", "", ., fixed = TRUE) %>% 
+      gsub(" ", "+", ., fixed = TRUE)
+    file_path <- "www/cam.png"
+    outconn <- file(file_path,"wb")
+    base64enc::base64decode(what=sent_image, output=outconn)
+    close(outconn)
+    im <- load.image(file_path)
+    out_width <- 200
+    out_height <- floor(out_width / dim(im)[1] * dim(im)[2])
+    im_input <- resize(im, out_width, out_height)
+    imager::save.image(im_input, file = file_path)
+    session$sendCustomMessage("toggle-next", list(id = "picture-mosaic", action = "pass"))
   })
   
   observeEvent(input$image_upload, {
@@ -98,6 +94,7 @@ picture_callback <- function(input, output, session) {
     im_input <- resize(im, out_width, out_height)
     fin_file <- "www/cam.jpg"
     imager::save.image(im_input, file = fin_file)
+    session$sendCustomMessage("toggle-next", list(id = "picture-mosaic", action = "pass"))
     trigger(input$image_upload)
   })
   

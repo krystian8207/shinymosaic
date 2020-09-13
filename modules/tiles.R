@@ -15,7 +15,8 @@ tiles_page <- page(
               class = "ui massive form",
               multiple_radio(
                 "set", NULL, 
-                choices = c("dogs", "cats", "cars"), position = "inline"
+                choices = c("dogs", "cats", "cars"), position = "inline",
+                selected = NULL
               )
             )
           ),
@@ -31,15 +32,8 @@ tiles_page <- page(
           )
         )
       )
-      #   div(
-      #     class = "ui two column very relaxed grid", 
-      #     div(class = "column", multiple_radio("set", "Select from predefined sets of tiles", 
-      #                                          choices = c("dogs", "cats", "cars"))),
-      #     div(class = "column", textInput("tags", "Search for tags"), actionButton("confirm_tags", "Confirm"))
-      #   ),
-      #   div(class = "ui vertical divider", "or")
     ),
-    div(class = "ui massive floating message", "Selected collection: cats", style = "text-align: center;")
+    uiOutput("progress_message")
   ),
   list(id = "home", title = "Home", icon = "angle double left"),
   list(id = "picture", title =  "Choose picture", icon = "angle double right")
@@ -48,22 +42,41 @@ tiles_page <- page(
 
 
 tiles_callback <- function(input, output, session, tiles_path) {
+
+  observeEvent(input$confirm_tags, {
+    req(input$confirm_tags)
+    session$sendCustomMessage("toggle-next", list(id = "tiles-picture", action = "stop"))
+    output$progress_message <- renderUI({
+      with_progress({
+        tiles_path(file.path("tiles", input$tags))
+        prepare_tiles(input$tags, session)
+        div(
+          class = "ui massive floating message", 
+          sprintf("Selected collection: %s", input$tags), 
+          style = "text-align: center;"
+        )
+      }, value = 0, message = "Starting creating tiles")
+    })
+    session$sendCustomMessage("clear-checkbox", list(id = "set"))
+  })
   
   observeEvent(input$set, {
-    tiles_path(file.path("tiles", input$set))
-  })
-  
-  observeEvent(input$confirm_tags, {
-    tiles_path(file.path("tiles", input$tags))
-    prepare_tiles(input$tags)
-  })
-  
+    req(input$set)
+    output$progress_message <- renderUI({
+        div(
+          class = "ui massive floating message", 
+          sprintf("Selected collection: %s", input$set), 
+          style = "text-align: center;"
+        )
+    })
+    session$sendCustomMessage("toggle-next", list(id = "tiles-picture", action = "pass"))
+  }, ignoreNULL = TRUE)
 }
 
-prepare_tiles <- function(tiles_tags) {
+prepare_tiles <- function(tiles_tags, session) {
   size <- c(20, 20)
   tiles_path <- file.path("tile", tiles_tags)
-  message("downloading data")
+  set_progress(value = 0.1, message = "Downloading data..", session = session)
   for (tile_tag in tiles_tags) {
     tile_path <- file.path("tile", tile_tag)
     api_url <- httr::GET(glue::glue("https://api.creativecommons.engineering/v1/images/?q={tile_tag}&type=jpg&size=small&page_size=500&page=1"))
@@ -74,7 +87,8 @@ prepare_tiles <- function(tiles_tags) {
     dir.create(tile_path)
     download.file(urls, destfile = file.path(tile_path, basename(urls)))
   }
-  
+  set_progress(value = "0.5", message = "Resizing images..", session = session)
+
   message("resizing images")
   for (tile_tag in tiles_tags) {
     tile_path <- file.path("tile", tile_tag)
@@ -93,5 +107,6 @@ prepare_tiles <- function(tiles_tags) {
     }
   }
   unlink(tiles_path, recursive = TRUE)
-  message("done")
+  set_progress(value = 0.8, message = "Saving images..", session = session)
+  session$sendCustomMessage("toggle-next", list(id = "tiles-picture", action = "pass"))
 }
