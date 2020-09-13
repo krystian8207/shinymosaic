@@ -1,13 +1,3 @@
-divider <- function(..., class = "") {
-  div(class = glue::glue("ui {class} divider"), ...)
-}
-column <- function(..., class = "") {
-  div(class = glue::glue("{class} column"), ...)
-}
-row <- function(..., class = "") {
-  div(class = glue::glue("{class} row"), ...)
-}
-
 tiles_page <- page(
   "tiles",
   "Choose image collection",
@@ -49,7 +39,7 @@ tiles_page <- page(
       #   ),
       #   div(class = "ui vertical divider", "or")
     ),
-    div(class = "ui large floating message", "Selected collection: cats", style = "text-align: center;")
+    div(class = "ui massive floating message", "Selected collection: cats", style = "text-align: center;")
   ),
   list(id = "home", title = "Home", icon = "angle double left"),
   list(id = "picture", title =  "Choose picture", icon = "angle double right")
