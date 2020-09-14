@@ -134,7 +134,6 @@ prepare_tiles <- function(tiles_tag, user_path, session) {
   set_progress(value = 0.1, message = "Downloading data..", session = session)
   
   api_response <- httr::GET(img_source_api(tiles_tag))
-  print("got")
   if (api_response$status != 200) {
     session$sendCustomMessage("app-alert", list(value = "Temporary failure with sourcing the data. Please try again later."))
     req(api_response$status == 200)
@@ -151,7 +150,6 @@ prepare_tiles <- function(tiles_tag, user_path, session) {
   })
   
   set_progress(value = "0.5", message = "Resizing images..", session = session)
-  
   
   for (img in list.files(temp_images_location, pattern = "jpg")) {
     im <- load.image(file = file.path(temp_images_location, img))
