@@ -5,8 +5,8 @@ account: krystian
 server: internal.appsilon.ai
 hostUrl: https://internal.appsilon.ai/__api__
 appId: 169
-bundleId: 444
+bundleId: 445
 url: https://internal.appsilon.ai/mosaic/
-when: 1600119421.82535
+when: 1600120235.10326
 asMultiple: FALSE
 asStatic: FALSE

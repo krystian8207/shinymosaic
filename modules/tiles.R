@@ -96,7 +96,7 @@ chosen_tiles_message <- function(tile_id) {
 }
 
 #' Single tile size
-tile_size <- c(30, 30)
+tile_size <- c(20, 20)
 
 #' Images source API
 #' 
