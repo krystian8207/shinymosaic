@@ -16,7 +16,7 @@ tiles_page <- page(
               class = "ui massive form",
               multiple_radio(
                 "set", NULL, 
-                choices = c("dogs", "cats", "cars"), position = "inline",
+                choices = c("dogs", "cats", "flowers"), position = "inline",
                 selected = NULL
               )
             )
@@ -62,8 +62,8 @@ tiles_callback <- function(input, output, session, tiles_path, user_path) {
     
     output$progress_message <- renderUI({
       with_progress({
-        prepare_tiles(input$tags, user_path, session)
-        chosen_tiles_message(input$tags)
+        prepare_tiles(isolate(input$tags), user_path, session)
+        chosen_tiles_message(isolate(input$tags))
       }, value = 0, message = "Starting creating tiles")
     })
     
@@ -76,7 +76,7 @@ tiles_callback <- function(input, output, session, tiles_path, user_path) {
     tiles_path(file.path("tiles", input$set))
     
     output$progress_message <- renderUI({
-      chosen_tiles_message(input$set)
+      chosen_tiles_message(isolate(input$set))
     })
     
     toggle_class(session, nav_bttn_id(conf$tiles$id, conf$picture$id), "remove", "disabled")

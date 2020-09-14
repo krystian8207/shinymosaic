@@ -6,6 +6,7 @@ library(magrittr)
 library(imager)
 library(RsimMosaic)
 
+options(scipen = 999) 
 source("modules/utils.R")
 source("modules/home.R")
 source("modules/picture.R")
@@ -31,9 +32,14 @@ ui <- semanticPage(
 
 server <- function(input, output, session) {
   tiles_path <- reactiveVal(NULL)
-  user_path <- tempdir()
+  user_path <- generate_user_path()
+  dir.create(user_path, recursive = TRUE)
+  
   router$server(input, output, session, tiles_path = tiles_path, user_path = user_path)
-  onSessionEnded(function() unlink(user_path, recursive = TRUE))
+  
+  onStop(function() {
+    unlink(user_path, recursive = TRUE)
+  })
 }
 
 shinyApp(ui, server)

@@ -119,3 +119,10 @@ toggle_visibility <- function(session, id, action) {
 clear_checkbox <- function(session, id) {
   session$sendCustomMessage("clear-checkbox", list(id = id))
 }
+
+#' Generate temporary user path
+#' 
+#' Sys.time based to make sure each session created different path.
+generate_user_path <- function() {
+  as.character(glue::glue("{tempdir()}{round(1000*as.numeric(Sys.time()))}"))
+}

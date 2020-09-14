@@ -109,7 +109,7 @@ base64_to_jpg <- function(base64string, png_file_path, jpg_file_path, output_wid
   sent_image <- base64string %>% 
     gsub("data:image/png;base64,", "", ., fixed = TRUE) %>% 
     gsub(" ", "+", ., fixed = TRUE)
-  outconn <- file(png_file_path, "wb")
+  outconn <- file(png_file_path, "wb", blocking = FALSE)
   base64enc::base64decode(what=sent_image, output=outconn)
   close(outconn)
   im <- load.image(png_file_path)
