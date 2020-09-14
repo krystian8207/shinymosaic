@@ -25,15 +25,15 @@ div[data-path="home"] {
     height: 240px !important;
 }
 
-.camerainput, .photooutput {
+#camerainput, #photooutput {
     width: 320px !important;
 }
 
-.uploadoutput {
+#uploadoutput {
     width: 200px !important;
 }
 
-.camerainput > .image, .photooutput > .image {
+#camerainput > .image, #photooutput > .image {
     height: auto !important;
 }
 
@@ -46,7 +46,7 @@ div[data-path="home"] {
     display: none;
 }
 
-#contentarea div.camerainput, #contentarea div.photooutput, #contentarea div.uploadoutput {
+#camerainput, #photooutput, #uploadoutput {
     display: none;
 }
 

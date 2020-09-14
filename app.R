@@ -22,6 +22,7 @@ router <- make_router(
 ui <- semanticPage(
   tags$head(
     tags$link(rel = "stylesheet", href = "style.css"),
+    tags$script(glue::glue("var consts = {jsonlite::toJSON(conf, auto_unbox = TRUE)}")),
     tags$script(src = "app.js")
   ),
   router$ui,
@@ -32,6 +33,8 @@ server <- function(input, output, session) {
   tiles_path <- reactiveVal(NULL)
   user_path <- tempdir()
   router$server(input, output, session, tiles_path = tiles_path, user_path = user_path)
+  onSessionEnded(function() unlink(user_path, recursive = TRUE))
 }
 
 shinyApp(ui, server)
+  

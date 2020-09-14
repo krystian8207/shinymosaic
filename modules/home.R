@@ -1,3 +1,4 @@
+#' Home page grid template
 home_page_grid <- grid_template(default = list(
   areas = rbind(
     c("blankt", "blankt", "blankt"),
@@ -7,6 +8,7 @@ home_page_grid <- grid_template(default = list(
   cols_width = c("40%", "auto", "40%")
 ))
 
+#' Home page UI content
 hello_page <-   div(
   grid(home_page_grid,
        blankl = div(""),
@@ -14,8 +16,8 @@ hello_page <-   div(
        blankb = div(""),
        blankr = div(""),
        start = click_button(
-         glue::glue("home-tiles"), "Start", class = "orange fluid  massive",
-         href = route_link("tiles"), style = "font-size: 2.5rem;"
+         nav_bttn_id(conf$home$id, conf$tiles$id), conf$home$title, class = "orange fluid  massive",
+         href = route_link(conf$tiles$id), style = "font-size: 2.5rem;"
        )
   ) 
 )

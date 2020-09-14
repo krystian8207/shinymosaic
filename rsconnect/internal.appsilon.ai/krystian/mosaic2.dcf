@@ -1,0 +1,12 @@
+name: mosaic2
+title: mosaic
+username: krystian
+account: krystian
+server: internal.appsilon.ai
+hostUrl: https://internal.appsilon.ai/__api__
+appId: 169
+bundleId: 423
+url: https://internal.appsilon.ai/mosaic/
+when: 1600023447.95003
+asMultiple: FALSE
+asStatic: FALSE

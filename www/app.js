@@ -9,17 +9,18 @@ var canvas = null;
 var photo = null;
 var startbutton = null;
 var againbutton = null;
+const v_ids = consts.picture.view_ids
 
 function startup(message) {
-    video = document.getElementById('video');
-    canvas = document.getElementById('canvas');
-    photo = document.getElementById('photo');
-    startbutton = document.getElementById('startbutton');
-    againbutton = document.getElementById('again');
-    $('#image_message').hide()
-    $('#contentarea > div.uploadoutput').hide()
-    $('#contentarea > div.camerainput').show()
-    $('#contentarea > div.photooutput').hide()
+    video = document.getElementById(v_ids.video_output);
+    canvas = document.getElementById(v_ids.video_canvas);
+    photo = document.getElementById(v_ids.video_snaphot_output);
+    startbutton = document.getElementById(v_ids.video_snaphot_button);
+    againbutton = document.getElementById(v_ids.video_redo_button);
+    $('#' + v_ids.image_message).hide()
+    $('#' + v_ids.upload_image_output_container).hide()
+    $('#' + v_ids.video_card).show()
+    $('#' + v_ids.video_snaphot_output_container).hide()
 
     navigator.mediaDevices.getUserMedia({
             video: true,
@@ -82,8 +83,8 @@ function takepicture() {
         var data = canvas.toDataURL('image/png');
         Shiny.setInputValue("data_url", data);
         photo.setAttribute('src', data);
-        $('#contentarea > div.camerainput').hide()
-        $('#contentarea > div.photooutput').show()
+        $('#' + v_ids.video_card).hide()
+        $('#' + v_ids.video_snaphot_output_container).show()
         
     } else {
         clearphoto();
@@ -91,29 +92,29 @@ function takepicture() {
 }
 
 function retry() {
-        $('#contentarea > div.camerainput').show()
-        $('#contentarea > div.photooutput').hide()
+        $('#' + v_ids.video_card).show()
+        $('#' + v_ids.video_snaphot_output_container).hide()
 }
 
 function show_uploaded(message) {
-  $('#image_message').hide()
-  $('#contentarea > div.camerainput').hide()
-  $('#contentarea > div.photooutput').hide()
-  $('#contentarea > div.uploadoutput').show()
+  $('#' + v_ids.image_message).hide()
+  $('#' + v_ids.video_card).hide()
+  $('#' + v_ids.video_snaphot_output_container).hide()
+  $('#' + v_ids.upload_image_output_container).show()
 }
 
 Shiny.addCustomMessageHandler("take-photo", startup);
 Shiny.addCustomMessageHandler("show-upload", show_uploaded);
 
-function toggle_next_step(message) {
-  if (message.action == "pass") {
-    $('#' + message.id).removeClass("disabled")
+function toggle_class(message) {
+  if (message.action == "remove") {
+    $('#' + message.id).removeClass(message.eclass)
   }
-  if (message.action == "stop") {
-    $('#' + message.id).addClass("disabled")
+  if (message.action == "add") {
+    $('#' + message.id).addClass(message.eclass)
   }
 }
-Shiny.addCustomMessageHandler("toggle-next", toggle_next_step);
+Shiny.addCustomMessageHandler("toggle-class", toggle_class);
 
 function clear_checkbox(message) {
   $('#' + message.id + ' .checkbox').checkbox('uncheck')
@@ -129,5 +130,9 @@ function toggle_visibility(message) {
   }
 
 }
-
 Shiny.addCustomMessageHandler("toggle-view", toggle_visibility);
+
+function app_alert(message) {
+  alert(message.value)
+}
+Shiny.addCustomMessageHandler("app-alert", app_alert);
