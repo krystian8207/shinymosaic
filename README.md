@@ -1,4 +1,4 @@
-# Shiny Moisaic Generator 
+# Shiny Mosaic Generator 
 
 ![](www/start.jpeg)
 
